@@ -1,0 +1,23 @@
+{
+  "development": {
+    "username": "root",
+    "password": "platinum",
+    "database": "minerva",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "test": {
+    "username": "root",
+    "password": "platinum",
+    "database": "database_test",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "production": {
+    "database": "yc9ukphna95u3bxc",
+    "host": "y2w3wxldca8enczv.cbetxkdyhwsb.us-east-1.rds.amazonaws.com",
+    "username": "gxewh5jk3kjgm0do",
+    "password": "b93acw01fjkecq6c",
+    "dialect": "mysql"
+  }
+}
