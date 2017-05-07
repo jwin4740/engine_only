@@ -165,7 +165,7 @@ function getEngineMove() {
     if (game.game_over()) {
         alert('Game over');
     }
-    searchMode = true;
+    // searchMode = true;
   
     positionCount = 0;
     GameScore.searchScore = GameScore.currentScore;
