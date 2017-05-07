@@ -4,7 +4,7 @@ var roundedScore;
 var game = new Chess();
 var move;
 var board;
-var searchMode = false;
+
 const pieceObject = {
     empty: 0,
     wP: {
@@ -56,7 +56,7 @@ const pieceObject = {
         value: 1
     }
 };
-
+var tempScoreArray = [];
 var tempMaterialArray = [];
 var GameScore = {};
 var positionCount = 0;
@@ -69,7 +69,10 @@ GameScore.captureScore = 0;
 GameScore.mvvLvaScores = []; // every combination of victim and attacker will have their individual index
 
 
-function getMaterialScores() {
+function getMaterialScores(game) {
+    tempMaterialArray = [];
+    GameScore.blackMaterial = 0;
+    GameScore.whiteMaterial = 0;
     for (var i = 1; i < 9; i++) {
         for (var m = 97; m < 105; m++) {
             var kar = String.fromCharCode(m);
@@ -93,79 +96,78 @@ function getMaterialScores() {
         }
 
     }
-    if (searchMode) {
+ 
         GameScore.searchScore = (GameScore.whiteMaterial - GameScore.blackMaterial) / 100;
         return GameScore.searchScore;
-    } else {
-        GameScore.currentScore = (GameScore.whiteMaterial - GameScore.blackMaterial) / 100;
-        return GameScore.currentScore;
-    }
-
 }
 
-function getGameScore(move, color) {
-    if (move.flags.includes("c") || move.flags.includes("e")) {
-        console.log("calculates");
-        var capturedColor;
-        var shortColor;
-        var shortCapturedColor;
-        var shortNotation;
-        var lowerPiece = move.captured;
-        var piece = lowerPiece.toUpperCase();
+// function getGameScore(move, color) {
+//     if (move.flags.includes("c") || move.flags.includes("e")) {
+//         console.log("calculates");
+//         var capturedColor;
+//         var shortColor;
+//         var shortCapturedColor;
+//         var shortNotation;
+//         var lowerPiece = move.captured;
+//         var piece = lowerPiece.toUpperCase();
 
-        if (color === "white") {
+//         if (color === "white") {
 
-            shortColor = "b";
-        } else {
+//             shortColor = "b";
+//         } else {
 
-            shortColor = "w";
-        }
-        shortNotation = shortColor + piece;
-        // switch (piece) {
-        //     case 'P':
-        //         captured = shortColor + 'P';
-        //         break;
-        //     case 'N':
-        //         captured = shortColor + 'N';
-        //         break;
-        //     case 'B':
-        //         captured = shortColor + 'B';
-        //         break;
-        //     case 'R':
-        //         captured = shortColor + 'R';
-        //         break;
-        //     case 'Q':
-        //         captured = shortColor + 'Q';
-        //         break;
-        // }
-        if (shortColor === 'w') {
-            GameScore.blackMaterial += pieceObject[shortNotation].value;
-        } else {
-            GameScore.whiteMaterial += pieceObject[shortNotation].value;
-        }
-    }
-
-
-    GameScore.currentScore = (GameScore.whiteMaterial - GameScore.blackMaterial) / 100;
-
-    // $("#scoreRunway").html(roundedScore);
-    // outputArray.push(roundedScore);
-    console.log(GameScore.currentScore);
-    return;
+//             shortColor = "w";
+//         }
+//         shortNotation = shortColor + piece;
+//         // switch (piece) {
+//         //     case 'P':
+//         //         captured = shortColor + 'P';
+//         //         break;
+//         //     case 'N':
+//         //         captured = shortColor + 'N';
+//         //         break;
+//         //     case 'B':
+//         //         captured = shortColor + 'B';
+//         //         break;
+//         //     case 'R':
+//         //         captured = shortColor + 'R';
+//         //         break;
+//         //     case 'Q':
+//         //         captured = shortColor + 'Q';
+//         //         break;
+//         // }
+//         if (shortColor === 'w') {
+//             GameScore.blackMaterial += pieceObject[shortNotation].value;
+//         } else {
+//             GameScore.whiteMaterial += pieceObject[shortNotation].value;
+//         }
+//     }
 
 
-}
+//     GameScore.currentScore = (GameScore.whiteMaterial - GameScore.blackMaterial) / 100;
+
+//     // $("#scoreRunway").html(roundedScore);
+//     // outputArray.push(roundedScore);
+//     console.log(GameScore.currentScore);
+//     return;
+
+
+// }
+
+
 
 var minimaxRoot = function (depth, game, isMaximisingPlayer) {
-    var newGameMoves = game.moves();
-    var bestMove = Number.NEGATIVE_INFINITY;
+
+    var newGameMoves = game.ugly_moves();
+    var bestMove = 9999;
     var bestMoveFound;
+
     for (var i = 0; i < newGameMoves.length; i++) {
         var newGameMove = newGameMoves[i]
-        game.move(newGameMove);
-        var value = minimax(depth - 1, game, !isMaximisingPlayer);
+        game.ugly_move(newGameMove);
+        var value = minimax(depth - 1, game, -10000, 10000, !isMaximisingPlayer);
         game.undo();
-        if (value >= bestMove) {
+        if (value <= bestMove) {
             bestMove = value;
             bestMoveFound = newGameMove;
         }
@@ -173,43 +175,54 @@ var minimaxRoot = function (depth, game, isMaximisingPlayer) {
     return bestMoveFound;
 };
 
-var minimax = function (depth, game, isMaximisingPlayer) {
+var minimax = function (depth, game, alpha, beta, isMaximisingPlayer) {
     positionCount++;
     if (depth === 0) {
-        var curScore = getMaterialScores();
-        console.log(curScore);
-        return curScore;
+
+        var myScore = getMaterialScores(game);
+        tempScoreArray.push(myScore);
+        return myScore
     }
-    var newGameMoves = game.moves();
+
+    var newGameMoves = game.ugly_moves();
 
     if (isMaximisingPlayer) {
-        var bestMove = Number.NEGATIVE_INFINITY;
+        var bestMove = -9999;
         for (var i = 0; i < newGameMoves.length; i++) {
-            game.move(newGameMoves[i]);
-            bestMove = Math.max(bestMove, minimax(depth - 1, game, !isMaximisingPlayer));
+            game.ugly_move(newGameMoves[i]);
+            bestMove = Math.max(bestMove, minimax(depth - 1, game, alpha, beta, !isMaximisingPlayer));
             game.undo();
-
+            alpha = Math.max(alpha, bestMove);
+            if (beta <= alpha) {
+                return bestMove;
+            }
         }
         return bestMove;
     } else {
-        var bestMove = Number.POSITIVE_INFINITY;
+        var bestMove = 9999;
         for (var i = 0; i < newGameMoves.length; i++) {
-            game.move(newGameMoves[i]);
-            bestMove = Math.min(bestMove, minimax(depth - 1, game, !isMaximisingPlayer));
+            game.ugly_move(newGameMoves[i]);
+            bestMove = Math.min(bestMove, minimax(depth - 1, game, alpha, beta, !isMaximisingPlayer));
             game.undo();
+            beta = Math.min(beta, bestMove);
+            if (beta <= alpha) {
+                return bestMove;
+            }
         }
-
         return bestMove;
     }
 };
 
 
-
-
 function getEngineMove() {
+
+    if (game.game_over()) {
+        alert('Game over');
+    }
     searchMode = true;
     GameScore.searchScore = GameScore.currentScore;
     var bestMove = minimaxRoot(2, game, true);
+
     // var captureArray = [];
     // var tempMoves = game.moves();
 
@@ -230,16 +243,15 @@ function getEngineMove() {
     //     engineSource = engineMove.from;
     //     engineTarget = engineMove.to;
     // } else {
-    //     var randomIndex = Math.floor(Math.random() * legalMoves.length);
-    //     var engineMove = legalMoves[randomIndex];
-    //     engineSource = engineMove.from;
-    //     engineTarget = engineMove.to;
+    // var randomIndex = Math.floor(Math.random() * tempMoves.length);
+    // var engineMove = tempMoves[randomIndex];
+    // engineSource = engineMove.from;
+    // engineTarget = engineMove.to;
     // }
-    console.log(bestMove);
-    move = game.move(
-     bestMove
-    );
     searchMode = false;
+    return bestMove;
+
+
 
 
 

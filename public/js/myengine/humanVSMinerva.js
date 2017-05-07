@@ -8,11 +8,10 @@ var onDragStart = function (source, piece, position, orientation) {
 var onDrop = function (source, target) {
     // see if the move is legal
     color = 'white';
-    move = game.move({
+    var move = game.move({
         from: source,
         to: target,
         promotion: 'q',
-        verbose: true
     });
 
     if (move === null) return 'snapback';
@@ -27,10 +26,19 @@ var onSnapEnd = function () {
 
 function makeEngineMove() {
     color = 'black';
-    getEngineMove();
-    
 
+    var bestMove = getEngineMove(game);
+    game.ugly_move(bestMove);
+    // game.ugly_move({
+    //     color: "b",
+    //     flags: 1,
+    //     from: 21,
+    //     piece: "p",
+    //     to: 53
+    // });
+    tempScoreArray = [];
     board.position(game.fen());
+
 
 
 }
