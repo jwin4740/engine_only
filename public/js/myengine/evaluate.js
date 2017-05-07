@@ -97,69 +97,15 @@ function getMaterialScores(game) {
 
     }
  
-        GameScore.searchScore = (GameScore.whiteMaterial - GameScore.blackMaterial) / 100;
+        GameScore.searchScore = (GameScore.blackMaterial - GameScore.whiteMaterial) / 100;
         return GameScore.searchScore;
 }
-
-// function getGameScore(move, color) {
-//     if (move.flags.includes("c") || move.flags.includes("e")) {
-//         console.log("calculates");
-//         var capturedColor;
-//         var shortColor;
-//         var shortCapturedColor;
-//         var shortNotation;
-//         var lowerPiece = move.captured;
-//         var piece = lowerPiece.toUpperCase();
-
-//         if (color === "white") {
-
-//             shortColor = "b";
-//         } else {
-
-//             shortColor = "w";
-//         }
-//         shortNotation = shortColor + piece;
-//         // switch (piece) {
-//         //     case 'P':
-//         //         captured = shortColor + 'P';
-//         //         break;
-//         //     case 'N':
-//         //         captured = shortColor + 'N';
-//         //         break;
-//         //     case 'B':
-//         //         captured = shortColor + 'B';
-//         //         break;
-//         //     case 'R':
-//         //         captured = shortColor + 'R';
-//         //         break;
-//         //     case 'Q':
-//         //         captured = shortColor + 'Q';
-//         //         break;
-//         // }
-//         if (shortColor === 'w') {
-//             GameScore.blackMaterial += pieceObject[shortNotation].value;
-//         } else {
-//             GameScore.whiteMaterial += pieceObject[shortNotation].value;
-//         }
-//     }
-
-
-//     GameScore.currentScore = (GameScore.whiteMaterial - GameScore.blackMaterial) / 100;
-
-//     // $("#scoreRunway").html(roundedScore);
-//     // outputArray.push(roundedScore);
-//     console.log(GameScore.currentScore);
-//     return;
-
-
-// }
-
 
 
 var minimaxRoot = function (depth, game, isMaximisingPlayer) {
 
     var newGameMoves = game.ugly_moves();
-    var bestMove = 9999;
+    var bestMove = -9999;
     var bestMoveFound;
 
     for (var i = 0; i < newGameMoves.length; i++) {
@@ -167,7 +113,7 @@ var minimaxRoot = function (depth, game, isMaximisingPlayer) {
         game.ugly_move(newGameMove);
         var value = minimax(depth - 1, game, -10000, 10000, !isMaximisingPlayer);
         game.undo();
-        if (value <= bestMove) {
+        if (value >= bestMove) {
             bestMove = value;
             bestMoveFound = newGameMove;
         }
@@ -220,8 +166,11 @@ function getEngineMove() {
         alert('Game over');
     }
     searchMode = true;
+  
+    positionCount = 0;
     GameScore.searchScore = GameScore.currentScore;
-    var bestMove = minimaxRoot(2, game, true);
+    var bestMove = minimaxRoot(3, game, true);
+      console.log(positionCount);
 
     // var captureArray = [];
     // var tempMoves = game.moves();
