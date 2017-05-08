@@ -36,7 +36,7 @@ const blackPawnTable = [
     0, 0, 0, 0, 0, 0, 0, 0,
     10, 10, 0, -10, -10, 0, 10, 10,
     5, 0, 0, 5, 5, 0, 0, 5,
-    0, 0, 10, 20, 20, 10, 0, 0,
+    0, 0, 10, 25, 25, 10, 0, 0,
     5, 5, 5, 10, 10, 5, 5, 5,
     10, 10, 10, 20, 20, 10, 10, 10,
     20, 20, 20, 30, 30, 20, 20, 20,
@@ -49,7 +49,7 @@ const blackKnightTable = [
     0, 0, 0, 5, 5, 0, 0, 0,
     0, 0, 10, 10, 10, 10, 0, 0,
     0, 0, 10, 20, 20, 10, 5, 0,
-    5, 10, 15, 20, 20, 15, 10, 5,
+    5, 0, 15, 20, 20, 15, 0, 5,
     5, 10, 10, 20, 20, 10, 10, 5,
     0, 0, 5, 10, 10, 5, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0
@@ -124,6 +124,10 @@ function getMaterialScores(game) {
     tempMaterialArray = [];
     GameScore.blackMaterial = 0;
     GameScore.whiteMaterial = 0;
+    GameScore.searchScore = 0;
+    GameScore.whiteScore = 0;
+    GameScore.blackScore = 0;
+
     for (var i = 1; i < 9; i++) {
         for (var m = 97; m < 105; m++) {
 
@@ -150,25 +154,44 @@ function getMaterialScores(game) {
     }
     GameScore.searchScore += (GameScore.whiteMaterial - GameScore.blackMaterial) / 100;
 
-   // black knight
+    // black knight
     for (var i = 1; i < 9; i++) {
         for (var m = 97; m < 105; m++) {
             arrayCounter++;
             var kar = String.fromCharCode(m);
             var square = kar + i;
             var piece = game.get(square);
-            if (piece.type === "p" && piece.color === "w"){
-                GameScore.searchScore += whitePawnTable[arrayCounter];
+            if (piece == null) {
+                continue;
             }
+            switch (true) {
+                case piece.type === "p" && piece.color === "b":
+                    GameScore.blackScore += blackPawnTable[arrayCounter];
+                    break;
+                case piece.type === "n" && piece.color === "b":
+                    GameScore.blackScore += blackKnightTable[arrayCounter];
+                    break;
+                case piece.type === "p" && piece.color === "w":
+                    GameScore.whiteScore += whitePawnTable[arrayCounter];
+                    break;
+                case piece.type === "n" && piece.color === "w":
+                    GameScore.whiteScore += whiteKnightTable[arrayCounter];
+                    break;
+
+
+            }
+
         }
     }
 
+
+
     arrayCounter = 0;
-
+    GameScore.searchScore += (GameScore.whiteScore - GameScore.blackScore) / 100;
     return GameScore.searchScore;
-    
-
 }
+
+
 
 
 var minimaxRoot = function (depth, game, isMaximisingPlayer) {
@@ -238,7 +261,7 @@ function getEngineMove() {
 
     positionCount = 0;
     GameScore.searchScore = GameScore.currentScore;
-    var bestMove = minimaxRoot(3, game, true);
+    var bestMove = minimaxRoot(4, game, true);
     console.log(positionCount);
 
     // var captureArray = [];
