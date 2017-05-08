@@ -1,6 +1,6 @@
-
-
 var arrayCounter = 0;
+var hisArray = [];
+
 
 function getMaterialScores(game) {
     tempMaterialArray = [];
@@ -12,7 +12,6 @@ function getMaterialScores(game) {
 
     for (var i = 1; i < 9; i++) {
         for (var m = 97; m < 105; m++) {
-
             var kar = String.fromCharCode(m);
             var square = kar + i;
             var piece = game.get(square);
@@ -26,7 +25,6 @@ function getMaterialScores(game) {
 
     for (var i = 8; i > 0; i--) {
         for (var m = 97; m < 105; m++) {
-
             var kar = String.fromCharCode(m);
             var square = kar + i;
             var piece = game.get(square);
@@ -58,23 +56,21 @@ function getMaterialScores(game) {
     GameScore.searchScore += (GameScore.whiteScore - GameScore.blackScore) / 100;
 
 
+    var n = tempMaterialArray.length;
+    for (var i = 0; i < n; i++) {
+        if (tempMaterialArray[i] != null) {
+            var pieceCode = tempMaterialArray[i].color + (tempMaterialArray[i].type).toUpperCase();
+            if (pieceCode.includes('w')) {
+                GameScore.whiteMaterial += pieceObject[pieceCode].value;
 
-    // console.log(tempMaterialArray);
-    // var n = tempMaterialArray.length;
-    // for (var i = 0; i < n; i++) {
-    //     if (tempMaterialArray[i] != null) {
-    //         var pieceCode = tempMaterialArray[i].color + (tempMaterialArray[i].type).toUpperCase();
-    //         if (pieceCode.includes('w')) {
-    //             GameScore.whiteMaterial += pieceObject[pieceCode].value;
+            } else {
+                GameScore.blackMaterial += pieceObject[pieceCode].value;
 
-    //         } else {
-    //             GameScore.blackMaterial += pieceObject[pieceCode].value;
+            }
+        }
 
-    //         }
-    //     }
-
-    // }
-    // GameScore.searchScore += (GameScore.whiteMaterial - GameScore.blackMaterial) / 100;
+    }
+    GameScore.searchScore += (GameScore.whiteMaterial - GameScore.blackMaterial) / 100;
 
 
 
@@ -146,11 +142,11 @@ var minimax = function (depth, game, alpha, beta, isMaximisingPlayer) {
 
 function getEngineMove() {
 
+
+    // TODO: engine slows down a lot slightly after opening
     if (game.game_over()) {
         alert('Game over');
     }
-    // searchMode = true;
-
     positionCount = 0;
     GameScore.searchScore = GameScore.currentScore;
     var bestMove = minimaxRoot(3, game, true);
@@ -161,14 +157,39 @@ function getEngineMove() {
     searchMode = false;
     return bestMove;
 
-
-
-
-
 }
 
 
+function firstMoveFunct(game) {
 
+    // for opening black move it's hardcoded
+    switch (true) {
+        case hisArray[0] === "e4":
+            var bestMove = "e5";
+            break;
+        case hisArray[0] === "d4":
+            var bestMove = "d5";
+            break;
+        case hisArray[0] === "Nf3":
+            var bestMove = "Nc6";
+            break;
+        case hisArray[0] === "Nc3":
+            var bestMove = "Nf6";
+            break;
+        case hisArray[0] === "e3":
+            var bestMove = "e5";
+            break;
+        case hisArray[0] === "d3":
+            var bestMove = "e5";
+            break;
+        default:
+            var bestMove = "e6";
+
+    }
+
+    return bestMove;
+
+}
 
 
 

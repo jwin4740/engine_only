@@ -15,28 +15,32 @@ var onDrop = function (source, target) {
     });
 
     if (move === null) return 'snapback';
-    // getGameScore(move, color);
-    setTimeout(makeEngineMove, 1500);
+    getMaterialScores(game);
+    console.log("Score after white move: " + GameScore.searchScore);
+
+
 };
 
 
 var onSnapEnd = function () {
     board.position(game.fen());
+    hisArray = game.history();
+    setTimeout(makeEngineMove, 50);
+
 };
 
 function makeEngineMove() {
     color = 'black';
+    //TODO: settimeout not working; get a little delay before first move
 
-    var bestMove = getEngineMove(game);
-    game.ugly_move(bestMove);
-    // game.ugly_move({
-    //     color: "b",
-    //     flags: 1,
-    //     from: 21,
-    //     piece: "p",
-    //     to: 53
-    // });
-    // tempScoreArray = [];
+    if (hisArray.length < 2) {
+        var bestMove = firstMoveFunct(game);
+        game.move(bestMove);
+    } else {
+        var bestMove = getEngineMove(game);
+        game.ugly_move(bestMove);
+    }
+
     board.position(game.fen());
 
 
