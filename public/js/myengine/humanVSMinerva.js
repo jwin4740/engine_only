@@ -36,7 +36,7 @@ function makeEngineMove() {
     //     piece: "p",
     //     to: 53
     // });
-    tempScoreArray = [];
+    // tempScoreArray = [];
     board.position(game.fen());
 
 

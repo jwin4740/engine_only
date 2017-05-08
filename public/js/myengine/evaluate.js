@@ -1,123 +1,5 @@
-var engineSource;
-var engineTarget;
-var roundedScore;
-var game = new Chess();
-var move;
-var board;
 
 
-
-
-const whitePawnTable = [
-    0, 0, 0, 0, 0, 0, 0, 0,
-    20, 20, 20, 30, 30, 20, 20, 20,
-    10, 10, 10, 20, 20, 10, 10, 10,
-    5, 5, 5, 10, 10, 5, 5, 5,
-    0, 0, 10, 20, 20, 10, 0, 0,
-    5, 0, 0, 5, 5, 0, 0, 5,
-    10, 10, 0, -10, -10, 0, 10, 10,
-    0, 0, 0, 0, 0, 0, 0, 0
-];
-
-const whiteKnightTable = [
-    0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 5, 10, 10, 5, 0, 0,
-    5, 10, 10, 20, 20, 10, 10, 5,
-    5, 10, 15, 20, 20, 10, 10, 5,
-    0, 5, 10, 20, 20, 15, 0, 0,
-    0, 0, 10, 10, 10, 10, 0, 0,
-    0, 0, 0, 5, 5, 5, 0, 0,
-    0, -10, 0, 0, 0, 0, -10, 0
-];
-
-
-
-const blackPawnTable = [
-    0, 0, 0, 0, 0, 0, 0, 0,
-    10, 10, 0, -10, -10, 0, 10, 10,
-    5, 0, 0, 5, 5, 0, 0, 5,
-    0, 0, 10, 25, 25, 10, 0, 0,
-    5, 5, 5, 10, 10, 5, 5, 5,
-    10, 10, 10, 20, 20, 10, 10, 10,
-    20, 20, 20, 30, 30, 20, 20, 20,
-    0, 0, 0, 0, 0, 0, 0, 0
-];
-
-
-const blackKnightTable = [
-    0, -10, 0, 0, 0, 0, -10, 0,
-    0, 0, 0, 5, 5, 0, 0, 0,
-    0, 0, 10, 10, 10, 10, 0, 0,
-    0, 0, 10, 20, 20, 10, 5, 0,
-    5, 0, 15, 20, 20, 15, 0, 5,
-    5, 10, 10, 20, 20, 10, 10, 5,
-    0, 0, 5, 10, 10, 5, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0
-];
-
-
-const pieceObject = {
-    empty: 0,
-    wP: {
-        index: 1,
-        value: 100
-    },
-    wN: {
-        index: 2,
-        value: 300
-    },
-    wB: {
-        index: 3,
-        value: 300
-    },
-    wR: {
-        index: 4,
-        value: 500
-    },
-    wQ: {
-        index: 5,
-        value: 900
-    },
-    wK: {
-        index: 6,
-        value: 1
-    },
-    bP: {
-        index: 7,
-        value: 100
-    },
-    bN: {
-        index: 8,
-        value: 300
-    },
-    bB: {
-        index: 9,
-        value: 300
-    },
-    bR: {
-        index: 10,
-        value: 500
-    },
-    bQ: {
-        index: 11,
-        value: 900
-    },
-    bK: {
-        index: 12,
-        value: 1
-    }
-};
-var tempScoreArray = [];
-var tempMaterialArray = [];
-var GameScore = {};
-var positionCount = 0;
-GameScore.blackMaterial = 0;
-GameScore.whiteMaterial = 0;
-GameScore.startingScore = 0;
-GameScore.currentScore = 0;
-GameScore.searchScore = 0;
-GameScore.captureScore = 0;
-GameScore.mvvLvaScores = []; // every combination of victim and attacker will have their individual index
 var arrayCounter = 0;
 
 function getMaterialScores(game) {
@@ -137,31 +19,19 @@ function getMaterialScores(game) {
             tempMaterialArray.push(piece);
         }
     }
-    // console.log(tempMaterialArray);
-    var n = tempMaterialArray.length;
-    for (var i = 0; i < n; i++) {
-        if (tempMaterialArray[i] != null) {
-            var pieceCode = tempMaterialArray[i].color + (tempMaterialArray[i].type).toUpperCase();
-            if (pieceCode.includes('w')) {
-                GameScore.whiteMaterial += pieceObject[pieceCode].value;
 
-            } else {
-                GameScore.blackMaterial += pieceObject[pieceCode].value;
-
-            }
-        }
-
-    }
-    GameScore.searchScore += (GameScore.whiteMaterial - GameScore.blackMaterial) / 100;
 
     // black knight
-    for (var i = 1; i < 9; i++) {
+    //TODO: why missing first black knight
+
+    for (var i = 8; i > 0; i--) {
         for (var m = 97; m < 105; m++) {
-            arrayCounter++;
+
             var kar = String.fromCharCode(m);
             var square = kar + i;
             var piece = game.get(square);
             if (piece == null) {
+                arrayCounter++;
                 continue;
             }
             switch (true) {
@@ -180,14 +50,36 @@ function getMaterialScores(game) {
 
 
             }
+            arrayCounter++;
 
         }
     }
 
+    GameScore.searchScore += (GameScore.whiteScore - GameScore.blackScore) / 100;
+
+
+
+    // console.log(tempMaterialArray);
+    // var n = tempMaterialArray.length;
+    // for (var i = 0; i < n; i++) {
+    //     if (tempMaterialArray[i] != null) {
+    //         var pieceCode = tempMaterialArray[i].color + (tempMaterialArray[i].type).toUpperCase();
+    //         if (pieceCode.includes('w')) {
+    //             GameScore.whiteMaterial += pieceObject[pieceCode].value;
+
+    //         } else {
+    //             GameScore.blackMaterial += pieceObject[pieceCode].value;
+
+    //         }
+    //     }
+
+    // }
+    // GameScore.searchScore += (GameScore.whiteMaterial - GameScore.blackMaterial) / 100;
+
 
 
     arrayCounter = 0;
-    GameScore.searchScore += (GameScore.whiteScore - GameScore.blackScore) / 100;
+
     return GameScore.searchScore;
 }
 
@@ -261,34 +153,11 @@ function getEngineMove() {
 
     positionCount = 0;
     GameScore.searchScore = GameScore.currentScore;
-    var bestMove = minimaxRoot(4, game, true);
+    var bestMove = minimaxRoot(3, game, true);
+    GameScore.currentScore = GameScore.searchScore;
+    console.log(GameScore.currentScore)
+
     console.log(positionCount);
-
-    // var captureArray = [];
-    // var tempMoves = game.moves();
-
-    // var legalMoves = game.moves({
-    //     verbose: true
-    // });
-    // var n = legalMoves.length;
-    // for (var i = 0; i < n; i++) {
-    //     // TODO: add heuristics (mvv-lva, ...)
-    //     if (legalMoves[i].flags.includes("c")) {
-    //         captureArray.push(legalMoves[i]);
-    //     }
-    //     // TODO: function*(move) -> generate fen, calculate value of board
-    // }
-    // if (captureArray.length != 0) {
-    //     var randomIndex = Math.floor(Math.random() * captureArray.length);
-    //     var engineMove = captureArray[randomIndex];
-    //     engineSource = engineMove.from;
-    //     engineTarget = engineMove.to;
-    // } else {
-    // var randomIndex = Math.floor(Math.random() * tempMoves.length);
-    // var engineMove = tempMoves[randomIndex];
-    // engineSource = engineMove.from;
-    // engineTarget = engineMove.to;
-    // }
     searchMode = false;
     return bestMove;
 
