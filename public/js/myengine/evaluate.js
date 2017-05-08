@@ -5,6 +5,57 @@ var game = new Chess();
 var move;
 var board;
 
+
+
+
+const whitePawnTable = [
+    0, 0, 0, 0, 0, 0, 0, 0,
+    20, 20, 20, 30, 30, 20, 20, 20,
+    10, 10, 10, 20, 20, 10, 10, 10,
+    5, 5, 5, 10, 10, 5, 5, 5,
+    0, 0, 10, 20, 20, 10, 0, 0,
+    5, 0, 0, 5, 5, 0, 0, 5,
+    10, 10, 0, -10, -10, 0, 10, 10,
+    0, 0, 0, 0, 0, 0, 0, 0
+];
+
+const whiteKnightTable = [
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 5, 10, 10, 5, 0, 0,
+    5, 10, 10, 20, 20, 10, 10, 5,
+    5, 10, 15, 20, 20, 10, 10, 5,
+    0, 5, 10, 20, 20, 15, 0, 0,
+    0, 0, 10, 10, 10, 10, 0, 0,
+    0, 0, 0, 5, 5, 5, 0, 0,
+    0, -10, 0, 0, 0, 0, -10, 0
+];
+
+
+
+const blackPawnTable = [
+    0, 0, 0, 0, 0, 0, 0, 0,
+    10, 10, 0, -10, -10, 0, 10, 10,
+    5, 0, 0, 5, 5, 0, 0, 5,
+    0, 0, 10, 20, 20, 10, 0, 0,
+    5, 5, 5, 10, 10, 5, 5, 5,
+    10, 10, 10, 20, 20, 10, 10, 10,
+    20, 20, 20, 30, 30, 20, 20, 20,
+    0, 0, 0, 0, 0, 0, 0, 0
+];
+
+
+const blackKnightTable = [
+    0, -10, 0, 0, 0, 0, -10, 0,
+    0, 0, 0, 5, 5, 0, 0, 0,
+    0, 0, 10, 10, 10, 10, 0, 0,
+    0, 0, 10, 20, 20, 10, 5, 0,
+    5, 10, 15, 20, 20, 15, 10, 5,
+    5, 10, 10, 20, 20, 10, 10, 5,
+    0, 0, 5, 10, 10, 5, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0
+];
+
+
 const pieceObject = {
     empty: 0,
     wP: {
@@ -67,7 +118,7 @@ GameScore.currentScore = 0;
 GameScore.searchScore = 0;
 GameScore.captureScore = 0;
 GameScore.mvvLvaScores = []; // every combination of victim and attacker will have their individual index
-
+var arrayCounter = 0;
 
 function getMaterialScores(game) {
     tempMaterialArray = [];
@@ -75,6 +126,7 @@ function getMaterialScores(game) {
     GameScore.whiteMaterial = 0;
     for (var i = 1; i < 9; i++) {
         for (var m = 97; m < 105; m++) {
+
             var kar = String.fromCharCode(m);
             var square = kar + i;
             var piece = game.get(square);
@@ -96,9 +148,26 @@ function getMaterialScores(game) {
         }
 
     }
- 
-        GameScore.searchScore = (GameScore.blackMaterial - GameScore.whiteMaterial) / 100;
-        return GameScore.searchScore;
+    GameScore.searchScore += (GameScore.whiteMaterial - GameScore.blackMaterial) / 100;
+
+   // black knight
+    for (var i = 1; i < 9; i++) {
+        for (var m = 97; m < 105; m++) {
+            arrayCounter++;
+            var kar = String.fromCharCode(m);
+            var square = kar + i;
+            var piece = game.get(square);
+            if (piece.type === "p" && piece.color === "w"){
+                GameScore.searchScore += whitePawnTable[arrayCounter];
+            }
+        }
+    }
+
+    arrayCounter = 0;
+
+    return GameScore.searchScore;
+    
+
 }
 
 
@@ -125,7 +194,7 @@ var minimax = function (depth, game, alpha, beta, isMaximisingPlayer) {
     positionCount++;
     if (depth === 0) {
 
-        var myScore = getMaterialScores(game);
+        var myScore = -1 * (getMaterialScores(game));
         tempScoreArray.push(myScore);
         return myScore
     }
@@ -166,11 +235,11 @@ function getEngineMove() {
         alert('Game over');
     }
     // searchMode = true;
-  
+
     positionCount = 0;
     GameScore.searchScore = GameScore.currentScore;
     var bestMove = minimaxRoot(3, game, true);
-      console.log(positionCount);
+    console.log(positionCount);
 
     // var captureArray = [];
     // var tempMoves = game.moves();
