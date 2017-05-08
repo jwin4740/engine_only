@@ -39,12 +39,19 @@ function getMaterialScores(game) {
                 case piece.type === "n" && piece.color === "b":
                     GameScore.blackScore += blackKnightTable[arrayCounter];
                     break;
+                case piece.type === "q" && piece.color === "b":
+                    GameScore.blackScore += blackQueenTable[arrayCounter];
+                    break;
                 case piece.type === "p" && piece.color === "w":
                     GameScore.whiteScore += whitePawnTable[arrayCounter];
                     break;
                 case piece.type === "n" && piece.color === "w":
                     GameScore.whiteScore += whiteKnightTable[arrayCounter];
                     break;
+                case piece.type === "q" && piece.color === "w":
+                    GameScore.whiteScore += whiteQueenTable[arrayCounter];
+                    break;
+
 
 
             }
@@ -75,7 +82,9 @@ function getMaterialScores(game) {
 
 
     arrayCounter = 0;
-
+    if (GameScore.searchScore > 50 || GameScore.searchScore < -50) {
+        console.log(GameScore.searchScore);
+    }
     return GameScore.searchScore;
 }
 
@@ -105,7 +114,7 @@ var minimax = function (depth, game, alpha, beta, isMaximisingPlayer) {
     positionCount++;
     if (depth === 0) {
 
-        var myScore = -1 * (getMaterialScores(game));
+        var myScore =  -1* (getMaterialScores(game));
         tempScoreArray.push(myScore);
         return myScore
     }
@@ -148,12 +157,12 @@ function getEngineMove() {
         alert('Game over');
     }
     positionCount = 0;
-    GameScore.searchScore = GameScore.currentScore;
+    // GameScore.searchScore = GameScore.currentScore;
     var bestMove = minimaxRoot(3, game, true);
     GameScore.currentScore = GameScore.searchScore;
     console.log(GameScore.currentScore)
 
-    console.log(positionCount);
+    // console.log(positionCount);
     searchMode = false;
     return bestMove;
 
