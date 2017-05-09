@@ -32,7 +32,9 @@ var onSnapEnd = function () {
 function makeEngineMove() {
     color = 'black';
     //TODO: settimeout not working; get a little delay before first move
-
+    if (hisArray.length > 6) {
+        blackQueenTable[3] = 0;
+    }
     if (hisArray.length < 2) {
         var bestMove = firstMoveFunct(game);
         game.move(bestMove);

@@ -42,6 +42,9 @@ function getMaterialScores(game) {
                 case piece.type === "q" && piece.color === "b":
                     GameScore.blackScore += blackQueenTable[arrayCounter];
                     break;
+                case piece.type === "k" && piece.color === "b":
+                    GameScore.blackScore += blackKingTable[arrayCounter];
+                    break;
                 case piece.type === "p" && piece.color === "w":
                     GameScore.whiteScore += whitePawnTable[arrayCounter];
                     break;
@@ -82,9 +85,6 @@ function getMaterialScores(game) {
 
 
     arrayCounter = 0;
-    if (GameScore.searchScore > 50 || GameScore.searchScore < -50) {
-        console.log(GameScore.searchScore);
-    }
     return GameScore.searchScore;
 }
 
@@ -114,7 +114,7 @@ var minimax = function (depth, game, alpha, beta, isMaximisingPlayer) {
     positionCount++;
     if (depth === 0) {
 
-        var myScore =  -1* (getMaterialScores(game));
+        var myScore = -1 * (getMaterialScores(game));
         tempScoreArray.push(myScore);
         return myScore
     }
@@ -158,9 +158,10 @@ function getEngineMove() {
     }
     positionCount = 0;
     // GameScore.searchScore = GameScore.currentScore;
-    var bestMove = minimaxRoot(3, game, true);
+    var bestMove = minimaxRoot(5, game, true);
     GameScore.currentScore = GameScore.searchScore;
-    console.log(GameScore.currentScore)
+    console.log(GameScore.currentScore);
+    console.log("nodes: " + positionCount);
 
     // console.log(positionCount);
     searchMode = false;
