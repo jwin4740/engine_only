@@ -166,7 +166,6 @@ function getEngineMove() {
     // console.log(positionCount);
     searchMode = false;
     return bestMove;
-
 }
 
 
